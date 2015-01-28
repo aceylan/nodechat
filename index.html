@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<meta charset="UTF-8">
+	<title>Örnek başlık</title>
+	 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.js"></script>
+	<!-- Latest compiled and minified CSS -->
+<!--<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/bootstrap.min.js" type="text/javascript"></script>-->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+
+<style type="text/css">
+input{width:100%;}
+button{width:100%;}
+body{background-color: #a6d757;}
+#audio1{display:none;}
+</style>
+<!-- Latest compiled and minified JavaScript -->
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript">
+$(function(){
+
+  $("#roworta").height($(window).height()-$(".rowust").height()-$(".rowalt").height()-20);
+  
+  $('#mesajlar').height($("#roworta").height()-10);
+
+
+ var socket = io(); //socketi tanımlıyoruz. 
+  function mesajgonderolay(){ //mesaj gönderilmesi olayını tanımladığım fonksiyon
+	  socket.emit('sohbetmesaj', $('#mesaj').val());//sunucuya sohbetmesaj olayını ve mesaj kutusundaki yazıyı gönder
+      $('#mesaj').val(''); //mesaj kutusundaki yazıyı sıfırla
+      
+
+      var elem = document.getElementById('roworta');
+      elem.scrollTop = elem.scrollHeight;
+  }
+   socket.on('sohbetmesaj', function(msg){  //sunucudan sohbetmesaj verisi geldiğinde çalışacak fonksiyon
+	    var msgson=msg;
+      msgson = msg.replace(":)", "<img src='http://www.arifceylan.com/ifade/gulucuk.png'/>");
+      msgson=msgson.replace(":*","<img src='http://www.arifceylan.com/ifade/opucuk.png'/>");
+      msgson=msgson.replace(":k","<img src='http://www.arifceylan.com/ifade/kizgin.png'/>");
+      msgson=msgson.replace(":d","<img src='http://www.arifceylan.com/ifade/siritma.png'/>");
+      msgson=msgson.replace(";)","<img src='http://www.arifceylan.com/ifade/gozkirp.png'/>");
+      msgson=msgson.replace(":(","<img src='http://www.arifceylan.com/ifade/uzgun.png'/>");
+        msgson=msgson.replace(":p","<img src='http://www.arifceylan.com/ifade/dil.png'/>");
+      msgson=msgson.replace("kalp","<img src='http://www.meleklermekani.com/attachments/kalp-gifleri-7-gif.19763/'/>");
+        
+       
+      $('#mesajlar').append($('<li>').append(msgson)); //mesajlar idli elemente mesajı ekle. 
+    
+     var thissound=document.getElementById("audio1");
+     thissound.play();
+	
+	  var elem = document.getElementById('roworta');
+      elem.scrollTop = elem.scrollHeight;
+	  });
+
+  $('#btnmesajgonder').click(mesajgonderolay);//mesajgonder butonuna tıklayınca mesajgonderolayı çağırılıyor. 
+
+  $('input#mesaj').bind('keypress', function(e) { //entera tıklanıldığında da mesajgonderolayını çağırsın. 
+	if(e.keyCode==13){
+		mesajgonderolay();
+	};
+  });
+
+  $(window ).resize(function() {
+  $("#roworta").height($(window).height()-$(".rowust").height()-$(".rowalt").height()-20);
+  
+  $('#mesajlar').height($("#roworta").height()-10);
+   });
+
+})
+ 
+</script>
+</head>
+<body>
+<div class="container">
+<div class="row rowust">
+<div class="col-md-12"><input type="text" name="ad" id="ad" placeholder="Adınızı yazın"/>
+</div>
+</div>
+<div class="row roworta" id="roworta" style="overflow:auto;">
+<div class="col-md-12">
+<ul id="mesajlar" type="circle">
+	<li>Mesaj gönderin</li>
+</ul>
+</div>
+</div>
+
+<div class="row rowalt">
+<div class="col-md-8"><input type="text" id="mesaj" placeholder="Mesaj yazın"/></div>
+<div class="col-md-4"><button id="btnmesajgonder">Mesaj gönder</button></div>
+</div>
+
+ 
+</div>
+<audio id="audio1" src="http://www.arifceylan.com/beep.wav" controls preload="auto" autobuffer>
+</audio>
+</body>
+</html>
